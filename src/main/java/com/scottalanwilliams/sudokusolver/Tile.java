@@ -32,19 +32,20 @@ public class Tile {
         }
     }
 
-    /** Returns a true if the possibil numbers changed, i e, at least one possible number
-        was eliminated
+    /**
+     * Returns a true if the possibil numbers changed, i e, at least one
+     * possible number was eliminated
      */
     public boolean updatePossibleNumbers(ArrayList<Integer> notPossibleNumbersList) {
-        
+
         if (isLocked) {
             return false;
         }
         boolean didStateChange = false;
-        
+
         for (Integer x : notPossibleNumbersList) {
             if (x != null && x > 0) {
-                if(getPossibleNumbers().get(x) == true){
+                if (getPossibleNumbers().get(x) == true) {
                     didStateChange = true;
                 }
                 getPossibleNumbers().put(x, false);
@@ -108,6 +109,29 @@ public class Tile {
 
     }
 
+    public int countNumberOfTrue() {
+        int answer = 0;
+        if (isLocked) {
+            return 1;
+        } else {
+            for (Integer theInt : possibleNumbers.keySet()) {
+                if (possibleNumbers.get(theInt) == true) {
+                    answer++;
+                }
+            }
+        }
+        return answer;
+    }
+
+    public ArrayList<Integer> exportPossibles() {
+        ArrayList<Integer> possibles = new ArrayList<Integer>();
+        for (Integer theInt : possibleNumbers.keySet()) {
+            if (possibleNumbers.get(theInt) == true) {
+                possibles.add(theInt);
+            }
+        }
+        return possibles;
+    }
 
     /**
      * @return the tileNumber
@@ -147,7 +171,6 @@ public class Tile {
     public Map<Integer, Boolean> getPossibleNumbers() {
         return possibleNumbers;
     }
-    
 
     /**
      * @param possibleNumbers the possibleNumbers to set

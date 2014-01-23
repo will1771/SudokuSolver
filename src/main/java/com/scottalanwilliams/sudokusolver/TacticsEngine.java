@@ -56,7 +56,7 @@ public class TacticsEngine {
      */
     public static boolean processHiddenSingleCanidate(Tile[] tileArray) {
         boolean didEliminate = false;
-        
+
         Map<Integer, Integer> currentPossibles = countCurrentPossibles(tileArray);
         //if any of the numbers have a value of one (and were not found by step one, that is a naked single
         ArrayList<Integer> confirmedSingles = new ArrayList<Integer>();
@@ -68,21 +68,21 @@ public class TacticsEngine {
                 didEliminate = true;
             }
         }
-        
+
         //any entries in confirmed singles now need their tile set
         for (Tile tile : tileArray) {
             //see if the tiles possible numbers contains the discovered single
             if (!tile.isIsLocked()) {
-               // System.out.println("Tile potential map is: " + tile.getPossibleNumbers());
+                // System.out.println("Tile potential map is: " + tile.getPossibleNumbers());
                 for (Integer theInt : confirmedSingles) {
-                    
+
                     //System.out.println("Looking for a: " + theInt);
                     if (tile.getPossibleNumbers().get(theInt) == true) {
                         //got it.  we cant set the tile yet because they all must be set at once, or there will be faulty data assumptions
                         //tile.setTileNumber(theInt);
                         //tile.setIsLocked(true);
                         tile.setCachedNumber(theInt);
-                        
+
                         break;
                     }
                 }
@@ -97,19 +97,53 @@ public class TacticsEngine {
     }
 
     /**
-     * Step 3: Naked double/triple Canidate.
-     *
+     * Step 3: Naked double Canidate. If two tiles in a tileset have only two
+     * and the same two possibiles, the other 7 tiles may remove those two
+     * numbers
      *
      */
-    public static void processNakedDoubleTripleCanidate(Tile[] tileArray) {
+    public static boolean processNakedDouble(Tile[] tileArray) {
+        boolean didChange = false;
+        for (int i = 0; i < tileArray.length; i++) {
+            //must have only TWO possibles
+            if (tileArray[i].countNumberOfTrue() == 2) {
+                for (int j = 0; j < tileArray.length; j++) {
+                    if (j == i) {
+                        continue; //do'nt compare to itself
+                    }
+                    if (tileArray[i].getPossibleNumbers().equals(tileArray[j].getPossibleNumbers())) {
+                        //we have to that are equal.  pass through to the other seven tiles that they cant be the two trues.
+                        ArrayList<Integer> exportPossibles = tileArray[i].exportPossibles();
+                        for (int k = 0; k < tileArray.length; k++) {
+                            if(k == j || k == i) continue; //don't update onself
+                            if(tileArray[k].updatePossibleNumbers(exportPossibles)){
+                                didChange = true;
+                            }
+                            
+                        }
+                        
+                        break;//we already found the matching pair, we can break
+                    }
+                }
+            }
+        }
+        return didChange;
     }
 
     /**
-     * Step 4: Hidden double/triple Canidate.
+     * Step 4: Naked triple Canidate.
      *
      *
      */
-    public static void processHiddenDoubleTripleCanidate(Tile[] tileArray) {
+    public static void processNakedTriple(Tile[] tileArray) {
+    }
+
+    /**
+     * Step 5: Hidden double/triple Canidate.
+     *
+     *
+     */
+    public static void processHiddenDoubleTriple(Tile[] tileArray) {
     }
 
     /**
@@ -135,10 +169,8 @@ public class TacticsEngine {
         }
         return currentPossiblesForSet;
     }
-    
-    
-    
-    public static boolean validateSet(Tile[] tileArray){
+
+    public static boolean validateSet(Tile[] tileArray) {
         return false;
     }
 }

@@ -68,7 +68,16 @@ public class SolverBrain {
              continue;   
             }
             
-            System.out.println("Hidden Single search failed. Proceeding to next step");
+            System.out.println("Hidden Single search failed. Proceeding Naked Pair Search");
+            
+           /* if(executeHiddenSingle(board)){
+             System.out.println("Got a match for Naked Pair.  Will repeat steps from the top");
+             continue;   
+            }*/
+            
+            System.out.println("Naked Pair search failed. Proceeding to next step");
+            
+            
             
             System.out.println("Sorry, I give up");
             break;
